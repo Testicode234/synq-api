@@ -10,13 +10,26 @@ import cookieParser from 'cookie-parser'
 dotenv.config();
 
 const PORT = process.env.PORT;
-const CLIENT_URL ="http://localhost:3000"; // frontend url
+
+
+const CLIENT_URLS = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://miniature-spoon-wr54g96jp4wqf599q-3000.app.github.dev",
+  "https://synq-lime.vercel.app"
+];
 
 const app = express();
 
 // --- MIDDLEWARE ---
 app.use(cors({
-  origin: CLIENT_URL,   // only your frontend
+  origin: function (origin, callback) {
+    if (!origin || CLIENT_URLS.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,    // allow cookies
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
